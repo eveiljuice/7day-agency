@@ -11,9 +11,6 @@ import { usePackage } from './PackageContext'
 import { Button } from './ui/Button'
 import { cn } from '@/lib/utils'
 
-const TELEGRAM_BOT_TOKEN = '8254582797:AAEGgxXuN_Z3mRTqg3_XcozlUybCAvhmGpc'
-const TELEGRAM_CHAT_ID = '-1003366453243'
-
 const formSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().min(1, 'Email or profile link is required'),
@@ -57,33 +54,20 @@ export function Contact() {
     setIsSubmitting(true)
     setSubmitStatus('idle')
 
-    // Build message for Telegram
-    const packageInfo = selectedPackage 
-      ? `📦 *Package:* ${selectedPackage.title} (${selectedPackage.price})`
-      : '📦 *Package:* Not selected'
-    
-    const message = `
-🔔 *New Lead from 7day Website*
-
-👤 *Name:* ${data.name}
-📧 *Email/X:* ${data.email}
-${data.telegram ? `📱 *Telegram:* ${data.telegram}` : ''}
-${packageInfo}
-
-💬 *Project Description:*
-${data.project}
-    `.trim()
-
     try {
-      const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: message,
-          parse_mode: 'Markdown',
+          name: data.name,
+          email: data.email,
+          telegram: data.telegram,
+          project: data.project,
+          packageInfo: selectedPackage 
+            ? `📦 *Package:* ${selectedPackage.title} (${selectedPackage.price})`
+            : undefined,
         }),
       })
 
