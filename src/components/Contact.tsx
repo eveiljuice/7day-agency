@@ -5,14 +5,19 @@ import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useLanguage } from './LanguageContext'
+import { usePackage } from './PackageContext'
 import { Button } from './ui/Button'
 import { cn } from '@/lib/utils'
+
+const TELEGRAM_BOT_TOKEN = '8254582797:AAEGgxXuN_Z3mRTqg3_XcozlUybCAvhmGpc'
+const TELEGRAM_CHAT_ID = '-1003366453243'
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().min(1, 'Email or profile link is required'),
+  telegram: z.string().optional(),
   project: z.string().min(10, 'Please describe your project'),
   captcha: z.string().min(1, 'Please solve the security check'),
 })
@@ -21,6 +26,7 @@ type FormData = z.infer<typeof formSchema>
 
 export function Contact() {
   const { t } = useLanguage()
+  const { selectedPackage, setSelectedPackage } = usePackage()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [mounted, setMounted] = useState(false)
@@ -50,11 +56,55 @@ export function Contact() {
 
     setIsSubmitting(true)
     setSubmitStatus('idle')
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setSubmitStatus('success')
-    reset()
-    setTimeout(() => setSubmitStatus('idle'), 5000)
+
+    // Build message for Telegram
+    const packageInfo = selectedPackage 
+      ? `📦 *Package:* ${selectedPackage.title} (${selectedPackage.price})`
+      : '📦 *Package:* Not selected'
+    
+    const message = `
+🔔 *New Lead from 7day Website*
+
+👤 *Name:* ${data.name}
+📧 *Email/X:* ${data.email}
+${data.telegram ? `📱 *Telegram:* ${data.telegram}` : ''}
+${packageInfo}
+
+💬 *Project Description:*
+${data.project}
+    `.trim()
+
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: message,
+          parse_mode: 'Markdown',
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to send message')
+      }
+
+      setSubmitStatus('success')
+      reset()
+      setSelectedPackage(null)
+      
+      // Generate new captcha
+      const a = Math.floor(Math.random() * 10) + 1
+      const b = Math.floor(Math.random() * 10) + 1
+      setCaptcha({ a, b, answer: a + b })
+    } catch {
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+      setTimeout(() => setSubmitStatus('idle'), 5000)
+    }
   }
 
   const inputClasses = 'w-full px-5 py-4 bg-white dark:bg-neutral-800 border-2 border-neutral-200 dark:border-neutral-700 rounded-xl text-secondary dark:text-white placeholder-neutral-400 transition-all duration-300 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10'
@@ -114,6 +164,34 @@ export function Contact() {
             className="bg-white dark:bg-neutral-800/50 rounded-3xl p-8 sm:p-10 border border-neutral-200 dark:border-neutral-700 shadow-xl shadow-neutral-200/50 dark:shadow-neutral-900/50"
           >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Selected Package Badge */}
+              {selectedPackage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                      {t.contact.selectedPackage}:
+                    </span>
+                    <span className="font-semibold text-secondary dark:text-white">
+                      {selectedPackage.title}
+                    </span>
+                    <span className="text-primary font-bold">
+                      {selectedPackage.price}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPackage(null)}
+                    className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full transition-colors"
+                  >
+                    <XMarkIcon className="w-5 h-5 text-neutral-500" />
+                  </button>
+                </motion.div>
+              )}
+
               <div>
                 <input
                   {...register('name')}
@@ -142,6 +220,15 @@ export function Contact() {
                 {errors.email && (
                   <p className="mt-2 text-sm text-error">{errors.email.message}</p>
                 )}
+              </div>
+
+              <div>
+                <input
+                  {...register('telegram')}
+                  type="text"
+                  placeholder={t.contact.telegram}
+                  className={inputClasses}
+                />
               </div>
 
               <div>

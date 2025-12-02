@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { LanguageProvider } from '@/components/LanguageContext'
+import { PackageProvider } from '@/components/PackageContext'
 
 const inter = Inter({ 
   subsets: ['latin', 'cyrillic'],
@@ -46,7 +47,9 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans`}>
         <ThemeProvider>
           <LanguageProvider>
-            {children}
+            <PackageProvider>
+              {children}
+            </PackageProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

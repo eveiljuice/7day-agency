@@ -116,14 +116,19 @@ export function Portfolio() {
                     />
                     
                     {/* Preview placeholder */}
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <a 
+                      href={(project as { link?: string }).link || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                    >
                       <motion.div 
                         className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
                         whileHover={{ scale: 1.05 }}
                       >
                         <span className="text-white font-medium">View Project</span>
                       </motion.div>
-                    </div>
+                    </a>
                   </div>
 
                   {/* Content */}
@@ -145,20 +150,6 @@ export function Portfolio() {
                           {tag}
                         </span>
                       ))}
-                    </div>
-
-                    {/* Result & Link */}
-                    <div className="flex items-center justify-between pt-4 border-t border-neutral-200 dark:border-neutral-700">
-                      <span className="text-sm font-semibold text-accent">
-                        {project.result}
-                      </span>
-                      <motion.button 
-                        className="flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400 hover:text-primary transition-colors group/link"
-                        whileHover={{ x: 3 }}
-                      >
-                        {t.portfolio.viewCase}
-                        <ArrowTopRightOnSquareIcon className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
-                      </motion.button>
                     </div>
                   </div>
                 </Card>

@@ -5,34 +5,38 @@ import {
   RocketLaunchIcon, 
   ComputerDesktopIcon, 
   DevicePhoneMobileIcon, 
-  SparklesIcon,
+  WrenchScrewdriverIcon,
   CheckIcon
 } from '@heroicons/react/24/outline'
 import { useLanguage } from './LanguageContext'
+import { usePackage } from './PackageContext'
 import { Card, ElectricCard } from './ui/Card'
 import { Button } from './ui/Button'
 
 const services = [
-  { key: 'mvp', icon: RocketLaunchIcon, popular: true, color: 'primary' },
   { key: 'web', icon: ComputerDesktopIcon, popular: false, color: 'blue' },
-  { key: 'mobile', icon: DevicePhoneMobileIcon, popular: false, color: 'purple' },
-  { key: 'ai', icon: SparklesIcon, popular: false, color: 'accent' },
+  { key: 'app', icon: DevicePhoneMobileIcon, popular: false, color: 'purple' },
+  { key: 'mvp', icon: RocketLaunchIcon, popular: true, color: 'primary' },
+  { key: 'custom', icon: WrenchScrewdriverIcon, popular: false, color: 'accent' },
 ]
 
 export function Services() {
   const { t } = useLanguage()
+  const { setSelectedPackage } = usePackage()
 
   const getServiceData = (key: string) => {
     const data: Record<string, { title: string; price: string; features: string[] }> = {
-      mvp: t.services.mvp,
       web: t.services.web,
-      mobile: t.services.mobile,
-      ai: t.services.ai,
+      app: t.services.app,
+      mvp: t.services.mvp,
+      custom: t.services.custom,
     }
     return data[key] || { title: '', price: '', features: [] }
   }
 
-  const handleScroll = () => {
+  const handleSelectPackage = (key: string) => {
+    const data = getServiceData(key)
+    setSelectedPackage({ key, title: data.title, price: data.price })
     const element = document.querySelector('#contact')
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
@@ -158,7 +162,7 @@ export function Services() {
                       <Button
                         variant="primary"
                         className="w-full mt-auto"
-                        onClick={handleScroll}
+                        onClick={() => handleSelectPackage(service.key)}
                       >
                         {t.services.getStarted}
                       </Button>
@@ -200,7 +204,7 @@ export function Services() {
                   <Button
                     variant="secondary"
                     className="w-full mt-auto"
-                    onClick={handleScroll}
+                    onClick={() => handleSelectPackage(service.key)}
                   >
                     {t.services.getStarted}
                   </Button>
