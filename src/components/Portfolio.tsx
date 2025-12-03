@@ -1,9 +1,10 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useLanguage } from './LanguageContext'
 import { Card } from './ui/Card'
+import { useState } from 'react'
 
 // Project gradients using brand colors
 const projectStyles = [
@@ -27,28 +28,22 @@ const projectStyles = [
 
 export function Portfolio() {
   const { t } = useLanguage()
+  const [currentIndex, setCurrentIndex] = useState(0)
+  
+  // Add "And more" card to projects
+  const allProjects = [...t.portfolio.projects, { 
+    title: 'And more...', 
+    description: 'We\'ve built dozens more successful projects. Get in touch to see our full portfolio.',
+    tags: ['Your project', 'could be', 'here'],
+    isMoreCard: true 
+  }]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % allProjects.length)
   }
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 100,
-        damping: 15,
-      },
-    },
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + allProjects.length) % allProjects.length)
   }
 
   return (
@@ -85,78 +80,141 @@ export function Portfolio() {
           </p>
         </motion.div>
 
-        <motion.div 
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-        >
-          {t.portfolio.projects.map((project, index) => {
-            const style = projectStyles[index % projectStyles.length]
-            
-            return (
+        {/* Slider Container */}
+        <div className="relative">
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-10 w-12 h-12 rounded-full bg-white dark:bg-neutral-800 shadow-xl border border-neutral-200 dark:border-neutral-700 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all group"
+            aria-label="Previous project"
+          >
+            <ChevronLeftIcon className="w-6 h-6 text-neutral-600 dark:text-neutral-300 group-hover:text-white" />
+          </button>
+          
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-10 w-12 h-12 rounded-full bg-white dark:bg-neutral-800 shadow-xl border border-neutral-200 dark:border-neutral-700 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all group"
+            aria-label="Next project"
+          >
+            <ChevronRightIcon className="w-6 h-6 text-neutral-600 dark:text-neutral-300 group-hover:text-white" />
+          </button>
+
+          {/* Slider */}
+          <div className="overflow-hidden">
+            <AnimatePresence mode="wait">
               <motion.div
-                key={index}
-                variants={itemVariants}
-                className={index === 0 ? 'md:col-span-2 lg:col-span-1' : ''}
+                key={currentIndex}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.3 }}
+                className="flex justify-center"
               >
-                <Card hover glowOnHover className="h-full overflow-hidden group">
-                  {/* Image Placeholder with Gradient */}
-                  <div className={`relative h-52 -mx-6 -mt-6 mb-5 bg-gradient-to-br ${style.gradient} overflow-hidden`}>
-                    {/* Pattern overlay */}
-                    <div 
-                      className="absolute inset-0 opacity-50"
-                      style={{ backgroundImage: style.pattern }}
-                    />
-                    
-                    {/* Animated overlay on hover */}
-                    <motion.div 
-                      className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500"
-                    />
-                    
-                    {/* Preview placeholder */}
-                    <a 
-                      href={(project as { link?: string }).link || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute inset-0 flex items-center justify-center cursor-pointer"
-                    >
-                      <motion.div 
-                        className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <span className="text-white font-medium">View Project</span>
-                      </motion.div>
-                    </a>
-                  </div>
+                {(() => {
+                  const project = allProjects[currentIndex]
+                  const style = projectStyles[currentIndex % projectStyles.length]
+                  const isMoreCard = (project as any).isMoreCard
+                  
+                  return (
+                    <div className="w-full max-w-lg mx-auto px-4">
+                      <Card hover glowOnHover className="h-full overflow-hidden group">
+                        {/* Image Placeholder with Gradient */}
+                        <div className={`relative h-64 -mx-6 -mt-6 mb-5 bg-gradient-to-br ${style.gradient} overflow-hidden`}>
+                          {/* Pattern overlay */}
+                          <div 
+                            className="absolute inset-0 opacity-50"
+                            style={{ backgroundImage: style.pattern }}
+                          />
+                          
+                          {/* Animated overlay on hover */}
+                          <motion.div 
+                            className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500"
+                          />
+                          
+                          {/* Preview placeholder or More indicator */}
+                          {isMoreCard ? (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <motion.div 
+                                className="text-center"
+                                animate={{ 
+                                  scale: [1, 1.05, 1],
+                                }}
+                                transition={{ 
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  ease: "easeInOut"
+                                }}
+                              >
+                                <div className="text-6xl mb-2">✨</div>
+                                <div className="text-white text-2xl font-bold">More to come</div>
+                              </motion.div>
+                            </div>
+                          ) : (
+                            <a 
+                              href={(project as { link?: string }).link || '#'}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                            >
+                              <motion.div 
+                                className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
+                                whileHover={{ scale: 1.05 }}
+                              >
+                                <span className="text-white font-medium">View Project</span>
+                              </motion.div>
+                            </a>
+                          )}
+                        </div>
 
-                  {/* Content */}
-                  <div>
-                    <h3 className="text-xl font-bold text-secondary dark:text-white mb-3 group-hover:text-primary transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-4 leading-relaxed">
-                      {project.description}
-                    </p>
+                        {/* Content */}
+                        <div>
+                          <h3 className={`text-2xl font-bold text-secondary dark:text-white mb-3 ${!isMoreCard && 'group-hover:text-primary'} transition-colors`}>
+                            {project.title}
+                          </h3>
+                          <p className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed">
+                            {project.description}
+                          </p>
 
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mb-5">
-                      {project.tags.map((tag, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1 text-xs font-medium bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                          {/* Tags */}
+                          <div className="flex flex-wrap gap-2 mb-5">
+                            {project.tags.map((tag, i) => (
+                              <span
+                                key={i}
+                                className={`px-3 py-1.5 text-sm font-medium ${
+                                  isMoreCard 
+                                    ? 'bg-primary/10 text-primary border border-primary/20' 
+                                    : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300'
+                                } rounded-lg`}
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </Card>
                     </div>
-                  </div>
-                </Card>
+                  )
+                })()}
               </motion.div>
-            )
-          })}
-        </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center gap-2 mt-8">
+            {allProjects.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentIndex 
+                    ? 'w-8 bg-primary' 
+                    : 'w-2 bg-neutral-300 dark:bg-neutral-600 hover:bg-primary/50'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )
