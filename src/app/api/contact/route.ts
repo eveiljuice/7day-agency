@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
-
-if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-  console.error('Missing Telegram credentials in environment variables')
-}
-
 export async function POST(request: NextRequest) {
+  // Read environment variables at runtime, not build time
+  const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+  const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
+
+  // Validate environment variables
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+    console.error('Missing Telegram credentials in environment variables')
+    return NextResponse.json(
+      { error: 'Server configuration error' },
+      { status: 500 }
+    )
+  }
+
   try {
     const body = await request.json()
     const { name, email, telegram, project, packageInfo } = body
