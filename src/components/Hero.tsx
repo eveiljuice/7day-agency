@@ -2,11 +2,10 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRightIcon } from '@heroicons/react/24/solid'
-import { useLanguage } from './LanguageContext'
+import { t } from '@/lib/en-translations'
 import { Button } from './ui/Button'
 
 export function Hero() {
-  const { t } = useLanguage()
 
   const handleScroll = (href: string) => {
     const element = document.querySelector(href)

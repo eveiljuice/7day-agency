@@ -8,7 +8,7 @@ import {
   WrenchScrewdriverIcon,
   CheckIcon
 } from '@heroicons/react/24/outline'
-import { useLanguage } from './LanguageContext'
+import { t } from '@/lib/en-translations'
 import { usePackage } from './PackageContext'
 import { Card, ElectricCard } from './ui/Card'
 import { Button } from './ui/Button'
@@ -21,7 +21,6 @@ const services = [
 ]
 
 export function Services() {
-  const { t } = useLanguage()
   const { setSelectedPackage } = usePackage()
 
   const getServiceData = (key: string) => {

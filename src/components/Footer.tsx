@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useLanguage } from './LanguageContext'
+import { t } from '@/lib/en-translations'
 
 const socialLinks = [
   { name: 'X', href: '#' },
@@ -10,8 +10,6 @@ const socialLinks = [
 ]
 
 export function Footer() {
-  const { t } = useLanguage()
-
   const navLinks = [
     { label: t.footer.home, href: '#' },
     { label: t.nav.projects, href: '#portfolio' },

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useLanguage } from './LanguageContext'
+import { t } from '@/lib/en-translations'
 import { Card } from './ui/Card'
 import { useState } from 'react'
 
@@ -27,7 +27,6 @@ const projectStyles = [
 ]
 
 export function Portfolio() {
-  const { t } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   
   // Add "And more" card to projects

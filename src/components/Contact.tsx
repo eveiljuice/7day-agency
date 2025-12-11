@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useLanguage } from './LanguageContext'
+import { t } from '@/lib/en-translations'
 import { usePackage } from './PackageContext'
 import { Button } from './ui/Button'
 import { cn } from '@/lib/utils'
@@ -22,7 +22,6 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 export function Contact() {
-  const { t } = useLanguage()
   const { selectedPackage, setSelectedPackage } = usePackage()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')

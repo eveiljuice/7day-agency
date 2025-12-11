@@ -7,7 +7,7 @@ import {
   CodeBracketIcon, 
   RocketLaunchIcon
 } from '@heroicons/react/24/outline'
-import { useLanguage } from './LanguageContext'
+import { t } from '@/lib/en-translations'
 
 const icons = [
   ChatBubbleLeftRightIcon,
@@ -24,8 +24,6 @@ const stepColors = [
 ]
 
 export function Process() {
-  const { t } = useLanguage()
-
   return (
     <section className="section-padding relative overflow-hidden bg-gradient-to-b from-neutral-100 to-white dark:from-neutral-800/50 dark:to-neutral-900">
       {/* Background Pattern */}

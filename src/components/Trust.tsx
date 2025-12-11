@@ -2,13 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { useLanguage } from './LanguageContext'
 
 const stats = [
-  { value: 50, suffix: '+', key: 'projects' },
-  { value: 15, suffix: '', key: 'countries' },
-  { value: 2, suffix: '', key: 'years' },
-  { value: 98, suffix: '%', key: 'satisfaction' },
+  { value: 50, suffix: '+', label: 'Projects' },
+  { value: 15, suffix: '', label: 'Countries' },
+  { value: 2, suffix: '', label: 'Years Experience' },
+  { value: 98, suffix: '%', label: 'Client Satisfaction' },
 ]
 
 function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
@@ -44,23 +43,8 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
 }
 
 export function Trust() {
-  const { t } = useLanguage()
-
-  const getStatLabel = (key: string) => {
-    const labels: Record<string, string> = {
-      projects: t.trust.projects,
-      countries: t.trust.countries,
-      years: t.trust.years,
-      satisfaction: t.trust.satisfaction,
-    }
-    return labels[key] || key
-  }
-
   return (
     <section className="py-20 sm:py-24 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-100 to-white dark:from-neutral-800/50 dark:to-neutral-900" />
-      
       {/* Electric line decorations */}
       <motion.div
         className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
@@ -107,7 +91,7 @@ export function Trust() {
                 </div>
               </motion.div>
               <div className="mt-3 text-base sm:text-lg font-medium text-neutral-600 dark:text-neutral-400">
-                {getStatLabel(stat.key)}
+                {stat.label}
               </div>
             </motion.div>
           ))}

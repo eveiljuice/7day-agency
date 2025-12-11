@@ -3,11 +3,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import { useLanguage } from './LanguageContext'
+import { t } from '@/lib/en-translations'
 import { cn } from '@/lib/utils'
 
 export function FAQ() {
-  const { t } = useLanguage()
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   const toggleQuestion = (index: number) => {
@@ -48,7 +47,7 @@ export function FAQ() {
         </motion.div>
 
         <div className="max-w-3xl mx-auto space-y-4">
-          {t.faq.questions.map((item, index) => (
+          {t.faq.items.map((item, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}

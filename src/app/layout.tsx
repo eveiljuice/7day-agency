@@ -2,11 +2,10 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
-import { LanguageProvider } from '@/components/LanguageContext'
 import { PackageProvider } from '@/components/PackageContext'
 
 const inter = Inter({ 
-  subsets: ['latin', 'cyrillic'],
+  subsets: ['latin'],
   variable: '--font-inter',
 })
 
@@ -46,11 +45,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`}>
         <ThemeProvider>
-          <LanguageProvider>
-            <PackageProvider>
-              {children}
-            </PackageProvider>
-          </LanguageProvider>
+          <PackageProvider>
+            {children}
+          </PackageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -4,21 +4,19 @@ import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
-import { useLanguage } from './LanguageContext'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
-  { id: 'projects', href: '#portfolio' },
-  { id: 'services', href: '#services' },
-  { id: 'faq', href: '#faq' },
-  { id: 'contact', href: '#contact' },
+  { id: 'projects', label: 'Projects', href: '#portfolio' },
+  { id: 'services', label: 'Services', href: '#services' },
+  { id: 'faq', label: 'FAQ', href: '#faq' },
+  { id: 'contact', label: 'Contact', href: '#contact' },
 ]
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { theme, setTheme } = useTheme()
-  const { language, setLanguage, t } = useLanguage()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -36,16 +34,6 @@ export function Navbar() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     }
-  }
-
-  const getNavLabel = (id: string) => {
-    const labels: Record<string, string> = {
-      projects: t.nav.projects,
-      services: t.nav.services,
-      faq: t.nav.faq,
-      contact: t.nav.contact,
-    }
-    return labels[id] || id
   }
 
   if (!mounted) return null
@@ -105,22 +93,9 @@ export function Navbar() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {getNavLabel(link.id)}
+                    {link.label}
                   </motion.button>
                 ))}
-                
-                {/* Divider */}
-                <div className="w-px h-6 bg-neutral-300 dark:bg-white/20 mx-2" />
-                
-                {/* Language Selector */}
-                <motion.button
-                  onClick={() => setLanguage(language === 'en' ? 'ru' : 'en')}
-                  className="px-3 py-1.5 text-xs font-semibold rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-primary dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/10 transition-all"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {language === 'en' ? 'RU' : 'EN'}
-                </motion.button>
 
                 {/* Theme Toggle */}
                 <motion.button
@@ -162,18 +137,12 @@ export function Navbar() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {t.nav.getStarted}
+                  Get Started
                 </motion.button>
               </div>
 
               {/* Mobile Menu Button */}
               <div className="flex lg:hidden items-center gap-2">
-                <button
-                  onClick={() => setLanguage(language === 'en' ? 'ru' : 'en')}
-                  className="px-2 py-1 text-xs font-semibold rounded text-neutral-500 dark:text-neutral-400 hover:text-primary"
-                >
-                  {language === 'en' ? 'RU' : 'EN'}
-                </button>
                 <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                   className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-primary"
@@ -248,7 +217,7 @@ export function Navbar() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        {getNavLabel(link.id)}
+                        {link.label}
                       </motion.button>
                     ))}
                   </div>
@@ -258,7 +227,7 @@ export function Navbar() {
                       className="w-full py-4 text-center font-semibold rounded-xl bg-gradient-to-r from-primary to-accent text-white shadow-lg"
                       whileTap={{ scale: 0.98 }}
                     >
-                      {t.nav.getStarted}
+                      Get Started
                     </motion.button>
                   </div>
                 </div>

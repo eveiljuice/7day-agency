@@ -1,6 +1,5 @@
 import { Navbar } from '@/components/Navbar'
 import { Hero } from '@/components/Hero'
-import { Trust } from '@/components/Trust'
 import { Services } from '@/components/Services'
 import { Process } from '@/components/Process'
 import { Portfolio } from '@/components/Portfolio'
@@ -13,7 +12,6 @@ export default function Home() {
     <main className="min-h-screen overflow-x-hidden">
       <Navbar />
       <Hero />
-      <Trust />
       <Services />
       <Process />
       <Portfolio />
