@@ -153,6 +153,16 @@ export const t = {
   contact: {
     title: 'Let\'s Build Together',
     subtitle: 'Ready to turn your idea into reality? Drop me a message and let\'s get started.',
+    selectedPackage: 'Selected Package',
+    name: 'Your Name',
+    email: 'Email or Profile Link',
+    telegram: 'Telegram (Optional)',
+    project: 'Tell Me About Your Project',
+    security: 'Security Check',
+    answer: 'Answer',
+    submit: 'Send Message',
+    success: 'Message sent! I\'ll get back to you within 24 hours.',
+    error: 'Something went wrong. Please try again or contact me directly.',
     form: {
       name: 'Your Name',
       namePlaceholder: 'John Doe',
